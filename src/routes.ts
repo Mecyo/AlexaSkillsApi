@@ -16,7 +16,7 @@ export async function appRoutes(app: FastifyInstance) {
         return habits;
     });
 
-    app.get('/findCastigadoActiveByName', async (request) => {
+    app.get('/findIdCastigadoActiveByName', async (request) => {
         const getPunishmentParams = z.object({
             nomeCastigado: z.string()
         });
@@ -38,7 +38,7 @@ export async function appRoutes(app: FastifyInstance) {
 
         const idCastigado = castigado ? castigado.id : undefined;
         
-        return {id: idCastigado};
+        return idCastigado;
     });
 
     app.patch('/incrementCastigoById', async (request) => {
