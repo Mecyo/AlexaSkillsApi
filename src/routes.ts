@@ -86,10 +86,10 @@ export async function appRoutes(app: FastifyInstance) {
 
     app.post('/insertCastigo', async (request) => {
         const getPunishmentBody = z.object({
-            createdAt: z.coerce.date().default(new Date()),
+            createdAt: z.coerce.date().optional().default(new Date()),
             punishedName: z.string(),
             qttDays: z.number(),
-            active: z.boolean().default(true)
+            active: z.boolean().optional().default(true)
         });
 
         const punished = getPunishmentBody.parse(request.body);
