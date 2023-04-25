@@ -1,0 +1,28 @@
+{
+  "name": "alexaskillsapi",
+  "version": "1.0.0",
+  "description": "API Rest NodeJS para atebder às minhas skills da Alexa",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^8.2.1",
+    "@prisma/client": "^4.13.0",
+    "dayjs": "^1.11.7",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.15.0",
+    "moment": "^2.29.4",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/datejs": "^0.0.33",
+    "@types/node": "^18.16.0",
+    "prisma": "^4.13.0",
+    "tsx": "^3.12.6",
+    "typescript": "^5.0.4"
+  }
+}

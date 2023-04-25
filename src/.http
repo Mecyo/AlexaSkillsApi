@@ -1,0 +1,37 @@
+### Get active by id
+
+GET http://localhost:3333/findCastigadoActiveByName?nomeCastigado=Mecyo
+
+
+### Increment castigo by id
+
+PATCH  http://localhost:3333/incrementCastigoById?idCastigado=1&diasCastigo=70
+
+
+### Update by id
+PATCH http://localhost:3333/updateCastigo
+Content-Type: application/json
+
+{
+    "id": 5,
+    "qtt_days": 11,
+    "punished_name": "Teste",
+    "active": true
+}
+
+
+### Create
+POST http://localhost:3333/insertCastigo
+Content-Type: application/json
+
+{
+    "qttDays": 3,
+    "punishedName": "Testando123",
+    "active": true
+}
+
+
+### Get active by id
+
+GET http://localhost:3333/getValidadeCastigo?nomeCastigado=Teste
+
