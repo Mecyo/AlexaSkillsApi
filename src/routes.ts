@@ -181,8 +181,8 @@ export async function appRoutes(app: FastifyInstance) {
             });
 
             return reply.status(200).send();
+        } else {
+            return  reply.status(400).send();
         }
-
-        return  reply.status(400).send();
     });
 }
