@@ -1,7 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "./lib/prisma";
-import { z } from 'zod';
+import dotenv from 'dotenv';
 import moment from 'moment';
+import { z } from 'zod';
 
 export async function appRoutes(app: FastifyInstance) {
 
@@ -138,92 +139,44 @@ export async function appRoutes(app: FastifyInstance) {
 
         return;
     });
-    
-    
-    /*
-    
-    async function getValidadeCastigo(nomeCastigado) {
-        const client = await connect();
-        const res = await client.query(`SELECT (created_at + qtt_days) as validade
-            FROM public.punishments
-            WHERE punished_name = '${nomeCastigado}'
-            AND active is true`);
-        console.log("RES: " + JSON.stringify(res));
-        console.log("ROWS: " + JSON.stringify(res.rows));
-        console.log("ROW[0]: " + JSON.stringify(res.rows[0]));
-        console.log("ROW[0]: " + res.rows[0].validade);
-        return res.rows[0].validade;
-    }*/
 
-    /*app.post('/punishments', async (request) => {
-        const createHabitBody = z.object({
-            title: z.string(),
-            weekDays: z.array(z.number().min(0).max(6))
+    app.get('/resetAllPunishments', async (request, reply) => {
+        const getResetParams = z.object({
+            senha: z.string()
         });
+        
+        const { senha } = getResetParams.parse(request.query);
 
-        const {title, weekDays} = createHabitBody.parse(request.body);
+        if(senha === process.env.RESET_PASSWORD) {
+            await prisma.punishment.updateMany({
+                data: { active: false },
+            });
+        }
 
-        const today = dayjs().startOf('day').toDate();
+        return reply.status(200).send();
+    });
 
-        await prisma.habit.create({
-            data: {
-                title,
-                created_at: today,
-                weekDays: {
-                    create: weekDays.map(weekDay => {
-                        return {
-                            week_day: weekDay,
-                        }
-                    })
-                }
-            }
+    app.get('/resetPunishmentByName', async (request, reply) => {
+        const getResetParams = z.object({
+            nome: z.string(),
+            senha: z.string()
         });
-    });*/
+        
+        const { nome, senha } = getResetParams.parse(request.query);
 
+        if(senha === process.env.RESET_PASSWORD) {
+            await prisma.punishment.updateMany({
+                where: {
+                    punished_name: {
+                        equals: nome,
+                        mode: 'insensitive'
+                    },
+                    active: true
+                },
+                data: { active: false },
+            });
+        }
 
-    // app.get('/day', async (request) => {
-    //     const getDayParams = z.object({
-    //         date: z.coerce.date()
-    //     });
-
-    //     const { date } = getDayParams.parse(request.query);
-
-
-    //     const parsedDate = dayjs(date).startOf('day');
-
-    //     const weekDay = parsedDate.get('day');
-
-    //     //retornar todos os hábitos possíveis + os que já foram completados
-    //     const possibleHabits = await prisma.habit.findMany({
-    //         where: {
-    //             created_at: {
-    //                 lte: date,
-    //             },
-    //             weekDays: {
-    //                 some: {
-    //                     week_day: weekDay,
-    //                 }
-    //             }
-    //         }
-    //     });
-
-    //     const day = await prisma.day.findUnique({
-    //         where: {
-    //             date: parsedDate.toDate(),
-    //         },
-    //         include: {
-    //             dayHabits: true,
-    //         }
-    //     });
-
-    //     const completedHabits = day?.dayHabits.map(dayHabit => {
-    //         return dayHabit.habit_id;
-    //     }) ?? [];
-
-    //     return {
-    //         possibleHabits,
-    //         completedHabits
-    //     }
-    // });
-
+        return reply.status(200).send();
+    });
 }
