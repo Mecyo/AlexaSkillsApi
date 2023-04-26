@@ -164,6 +164,8 @@ export async function appRoutes(app: FastifyInstance) {
         
         const { nome, senha } = getResetParams.parse(request.query);
 
+        console.log(`Nome: ${nome} - Senha: ${senha} - ENV_PASS: ${process.env.RESET_PASSWORD}`);
+
         if(senha === process.env.RESET_PASSWORD) {
             await prisma.punishment.updateMany({
                 where: {
