@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import moment from 'moment';
 import { z } from 'zod';
 
+dotenv.config();
+
 export async function appRoutes(app: FastifyInstance) {
 
     app.get('/health-check', async () => {
@@ -177,8 +179,10 @@ export async function appRoutes(app: FastifyInstance) {
                 },
                 data: { active: false },
             });
+
+            return reply.status(200).send();
         }
 
-        return reply.status(200).send();
+        return  reply.status(400).send();
     });
 }
