@@ -142,6 +142,30 @@ export async function appRoutes(app: FastifyInstance) {
         return;
     });
 
+    app.get('/getAllValidadeCastigo', async (request) => {
+        const castigados = await prisma.punishment.findMany({
+            where: {
+                active: true
+            },
+            select: {
+                punished_name: true,
+                created_at: true,
+                qtt_days: true
+            },
+        });
+
+        if(castigados && Array.isArray(castigados)) {
+            castigados.forEach(castigado => {
+                const startDate = castigado.created_at;
+                startDate.setDate(startDate.getDate() + castigado.qtt_days);
+    
+                Object.assign(castigado, {validadeCastigo: moment(startDate.toISOString().split("T")[0]).format('DD/MM/YYYY')});
+            });
+        }
+        
+        return castigados;
+    });
+
     app.get('/resetAllPunishments', async (request, reply) => {
         const getResetParams = z.object({
             senha: z.string()
