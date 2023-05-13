@@ -1,6 +1,6 @@
 ### Get active by id
 
-GET http://localhost:3333/findCastigadoActiveByName?nomeCastigado=Mecyo
+GET https://mecyo-alexa-skills-api.onrender.com/findIdCastigadoActiveByName?nomeCastigado=Joca
 
 
 ### Increment castigo by id
@@ -20,18 +20,65 @@ Content-Type: application/json
 }
 
 
+
+### Create user
+PUT http://localhost:3333/createUser?username=Mecyo&password=Mecyo@1985
+
+
+### Verify user password
+GET http://localhost:3333/verifyPassword?userId=1&password=Mecyo@19857
+
+
+
 ### Create
 POST http://localhost:3333/insertCastigo
 Content-Type: application/json
 
 {
-    "qttDays": 3,
-    "punishedName": "Testando123",
-    "active": true
+    "qttDays": 9,
+    "punishedName": "Juquinha"
 }
 
 
 ### Get active by id
 
-GET http://localhost:3333/getValidadeCastigo?nomeCastigado=Teste
+GET https://mecyo-alexa-skills-api.onrender.com/getValidadeCastigo?nomeCastigado=Teste
+
+
+
+### Get active by name
+
+GET http://localhost:3333/getValidadeCastigo?nomeCastigado=Juquinha
+
+
+### Get all active
+
+GET http://localhost:3333/getAllValidadeCastigo
+
+
+
+### Auth
+POST https://insanos-api.onrender.com/authenticate  HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "ejsmao@hotmail.com",
+    "password": "Mecyo@1985"
+}
+###
+https://insanos-api.onrender.com/players
+
+
+### Reset by name
+
+GET http://localhost:3333/resetPunishmentByName?nome=Juca&senha=CELULAR
+
+
+### Reset all
+
+GET http://localhost:3333/resetAllPunishments?senha=CELULAR
+
+
+
+getAllValidadeCastigo
 

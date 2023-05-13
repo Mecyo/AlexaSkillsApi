@@ -16,6 +16,19 @@ model Punishment {
   punished_name String   @unique
   qtt_days      Int
   active        Boolean
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
 
   @@map("punishments")
+}
+
+model User {
+  id                 Int          @id @default(autoincrement())
+  created_at         DateTime
+  name               String       @unique
+  senha              String
+  active             Boolean
+  createdPunishments Punishment[]
+
+  @@map("users")
 }

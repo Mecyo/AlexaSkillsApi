@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "./lib/prisma";
 import dotenv from 'dotenv';
-import moment from 'moment';
+import moment, { now } from 'moment';
 import { z } from 'zod';
 
 dotenv.config();
@@ -12,19 +12,64 @@ export async function appRoutes(app: FastifyInstance) {
         const databaseDate = await prisma.punishment.count();
         return 'SERVER RUNNING!'
     });
-    
-    app.get('/punishments', async () => {
-        const habits = await prisma.punishment.findMany();
 
-        return habits;
+    /*
+        
+    
+     
+    
+    async function verifyPassword(password, userId)*/
+
+    app.get('/verifyPassword', async (request) => {
+        const getUserParams = z.object({
+            userId: z.coerce.number(),
+            password: z.string()
+        });
+
+        const { userId, password } = getUserParams.parse(request.query);
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId,
+            }
+        });
+
+        return user && user.senha === password;
+    });
+    
+    app.put('/createUser', async (request) => {
+        const getUserParams = z.object({
+            username: z.string(),
+            password: z.string()
+        });
+
+        const { username, password } = getUserParams.parse(request.query);
+
+        const user = await prisma.user.create({
+            data:{
+                created_at: new Date(),
+                name: username,
+                senha: password,
+                active: true
+            }
+        });
+
+        return user;
+    });
+
+    app.get('/punishments', async () => {
+        const punishments = await prisma.punishment.findMany();
+
+        return punishments;
     });
 
     app.get('/findIdCastigadoActiveByName', async (request) => {
         const getPunishmentParams = z.object({
-            nomeCastigado: z.string()
+            nomeCastigado: z.string(),
+            userId: z.coerce.number()
         });
         
-        const { nomeCastigado } = getPunishmentParams.parse(request.query);
+        const { nomeCastigado, userId } = getPunishmentParams.parse(request.query);
         
         const castigado = await prisma.punishment.findFirst({
             where: {
@@ -32,6 +77,7 @@ export async function appRoutes(app: FastifyInstance) {
                     equals: nomeCastigado,
                     mode: 'insensitive'
                 },
+                userId: userId,
                 active: true
             },
             select: {
@@ -95,7 +141,13 @@ export async function appRoutes(app: FastifyInstance) {
             active: z.boolean().optional().default(true)
         });
 
+        const getPunishmentParams = z.object({
+            userId: z.coerce.number()
+        });
+
         const punished = getPunishmentBody.parse(request.body);
+
+        const { userId } = getPunishmentParams.parse(request.query);
 
         const castigado = await prisma.punishment.create({
             data: {
@@ -103,6 +155,7 @@ export async function appRoutes(app: FastifyInstance) {
                 punished_name: punished.punishedName,
                 qtt_days: punished.qttDays,
                 active: punished.active,
+                userId: userId
             }
         });
 
@@ -111,10 +164,11 @@ export async function appRoutes(app: FastifyInstance) {
 
     app.get('/getValidadeCastigo', async (request) => {
         const getPunishmentParams = z.object({
-            nomeCastigado: z.string()
+            nomeCastigado: z.string(),
+            userId: z.coerce.number()
         });
         
-        const { nomeCastigado } = getPunishmentParams.parse(request.query);
+        const { nomeCastigado, userId } = getPunishmentParams.parse(request.query);
         
         const castigado = await prisma.punishment.findFirst({
             where: {
@@ -122,6 +176,7 @@ export async function appRoutes(app: FastifyInstance) {
                     equals: nomeCastigado,
                     mode: 'insensitive'
                 },
+                userId: userId,
                 active: true
             },
             select: {
@@ -143,9 +198,15 @@ export async function appRoutes(app: FastifyInstance) {
     });
 
     app.get('/getAllValidadeCastigo', async (request) => {
+        const getPunishmentParams = z.object({
+            userId: z.coerce.number()
+        });
+        
+        const { userId } = getPunishmentParams.parse(request.query);
         const castigados = await prisma.punishment.findMany({
             where: {
-                active: true
+                active: true,
+                userId: userId
             },
             select: {
                 punished_name: true,
@@ -185,28 +246,23 @@ export async function appRoutes(app: FastifyInstance) {
     app.get('/resetPunishmentByName', async (request, reply) => {
         const getResetParams = z.object({
             nome: z.string(),
-            senha: z.string()
+            userId: z.coerce.number()
         });
         
-        const { nome, senha } = getResetParams.parse(request.query);
+        const { nome, userId } = getResetParams.parse(request.query);
 
-        console.log(`Nome: ${nome} - Senha: ${senha} - ENV_PASS: ${process.env.RESET_PASSWORD}`);
-
-        if(senha === process.env.RESET_PASSWORD) {
-            await prisma.punishment.updateMany({
-                where: {
-                    punished_name: {
-                        equals: nome,
-                        mode: 'insensitive'
-                    },
-                    active: true
+        await prisma.punishment.updateMany({
+            where: {
+                punished_name: {
+                    equals: nome,
+                    mode: 'insensitive'
                 },
-                data: { active: false },
-            });
+                userId: userId,
+                active: true
+            },
+            data: { active: false },
+        });
 
-            return reply.status(200).send();
-        } else {
-            return  reply.status(400).send();
-        }
+        return reply.status(200).send();
     });
 }
