@@ -31,12 +31,12 @@ GET http://localhost:3333/verifyPassword?userId=1&password=Mecyo@19857
 
 
 ### Create
-POST http://localhost:3333/insertCastigo
+POST http://localhost:3333/insertCastigo?userId=123456@testeMecyo
 Content-Type: application/json
 
 {
-    "qttDays": 9,
-    "punishedName": "Juquinha"
+    "qttDays": 2,
+    "punishedName": "Zeca"
 }
 
 
@@ -48,12 +48,12 @@ GET https://mecyo-alexa-skills-api.onrender.com/getValidadeCastigo?nomeCastigado
 
 ### Get active by name
 
-GET http://localhost:3333/getValidadeCastigo?nomeCastigado=Juquinha
+GET http://localhost:3333/getValidadeCastigo?nomeCastigado=Zeca&userId=testeMecyo@123456
 
 
 ### Get all active
 
-GET http://localhost:3333/getAllValidadeCastigo
+GET http://localhost:3333/getAllValidadeCastigo?userId=testeMecyo@123456
 
 
 

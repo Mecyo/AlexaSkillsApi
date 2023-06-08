@@ -13,50 +13,6 @@ export async function appRoutes(app: FastifyInstance) {
         return 'SERVER RUNNING!'
     });
 
-    /*
-        
-    
-     
-    
-    async function verifyPassword(password, userId)*/
-
-    app.get('/verifyPassword', async (request) => {
-        const getUserParams = z.object({
-            userId: z.coerce.number(),
-            password: z.string()
-        });
-
-        const { userId, password } = getUserParams.parse(request.query);
-
-        const user = await prisma.user.findUnique({
-            where: {
-                id: userId,
-            }
-        });
-
-        return user && user.senha === password;
-    });
-    
-    app.put('/createUser', async (request) => {
-        const getUserParams = z.object({
-            username: z.string(),
-            password: z.string()
-        });
-
-        const { username, password } = getUserParams.parse(request.query);
-
-        const user = await prisma.user.create({
-            data:{
-                created_at: new Date(),
-                name: username,
-                senha: password,
-                active: true
-            }
-        });
-
-        return user;
-    });
-
     app.get('/punishments', async () => {
         const punishments = await prisma.punishment.findMany();
 
@@ -66,7 +22,7 @@ export async function appRoutes(app: FastifyInstance) {
     app.get('/findIdCastigadoActiveByName', async (request) => {
         const getPunishmentParams = z.object({
             nomeCastigado: z.string(),
-            userId: z.coerce.number()
+            userId: z.string()
         });
         
         const { nomeCastigado, userId } = getPunishmentParams.parse(request.query);
@@ -142,7 +98,7 @@ export async function appRoutes(app: FastifyInstance) {
         });
 
         const getPunishmentParams = z.object({
-            userId: z.coerce.number()
+            userId: z.string()
         });
 
         const punished = getPunishmentBody.parse(request.body);
@@ -165,7 +121,7 @@ export async function appRoutes(app: FastifyInstance) {
     app.get('/getValidadeCastigo', async (request) => {
         const getPunishmentParams = z.object({
             nomeCastigado: z.string(),
-            userId: z.coerce.number()
+            userId: z.string()
         });
         
         const { nomeCastigado, userId } = getPunishmentParams.parse(request.query);
@@ -199,7 +155,7 @@ export async function appRoutes(app: FastifyInstance) {
 
     app.get('/getAllValidadeCastigo', async (request) => {
         const getPunishmentParams = z.object({
-            userId: z.coerce.number()
+            userId: z.string()
         });
         
         const { userId } = getPunishmentParams.parse(request.query);
@@ -246,7 +202,7 @@ export async function appRoutes(app: FastifyInstance) {
     app.get('/resetPunishmentByName', async (request, reply) => {
         const getResetParams = z.object({
             nome: z.string(),
-            userId: z.coerce.number()
+            userId: z.string()
         });
         
         const { nome, userId } = getResetParams.parse(request.query);
